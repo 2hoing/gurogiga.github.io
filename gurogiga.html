@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>의견·이의신청 기간 안내</title>
+    <style>
+        body {font-family:Arial,Helvetica,sans-serif; margin:0; padding:0; background:#f9f9f9;}
+        header {background:#4a90e2; color:#fff; padding:1.5rem; text-align:center;}
+        main  {max-width:800px; margin:auto; padding:2rem;}
+        .hidden {display:none;}
+        .btn {
+            display:inline-block; padding:0.6rem 1.2rem; margin-top:1rem;
+            background:#4a90e2; color:#fff; text-decoration:none; border-radius:4px;
+        }
+        footer {background:#333; color:#fff; text-align:center; padding:0.8rem;
+                position:fixed; bottom:0; width:100%;}
+        a   {color:#4a90e2; text-decoration:none;}
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 id="page-title">페이지 로딩 중…</h1>
+</header>
+
+<main>
+    <!-- 1️⃣ 의견제출 -->
+    <section id="page-submit" class="hidden">
+        <h2>의견제출 안내</h2>
+        <p>의견제출 기간: 2026. 3. 18. ~ 2026. 4 .6.</p>
+        <a class="btn"
+           href="https://www.realtyprice.kr/notice/gsstandard/realopinionGuide.htm"
+           target="_blank">의견제출 바로가기</a>
+    </section>
+
+    <!-- 2️⃣ 이의신청 – 외부 안내 페이지 -->
+    <section id="page-appeal" class="hidden">
+        <h2>이의신청 안내</h2>
+        <p>이의신청 기간: 2026. 4. 30. ~ 2026. 5. 29.</p>
+        <a class="btn"
+           href="https://www.realtyprice.kr/notice/gsstandard/objectionGuide.htm"
+           target="_blank">이의신청 바로가기</a>
+    </section>
+
+    <!-- 3️⃣ 상시 페이지 (기간 외) -->
+    <section id="page-default" class="hidden">
+        <h2>의견제출 및 이의신청 기간이 아닙니다</h2>
+        <p>현재는 의견제출·이의신청 기간이 아닙니다.</p>
+        <p>의견제출 기간: 2026. 3. 18. ~ 2026. 4 .6.</p>
+        <p>이의신청 기간: 2026. 4. 30. ~ 2026. 5. 29.</p>
+        <a class="btn"
+           href="https://www.realtyprice.kr/notice/gsindividual/search.htm"
+           target="_blank">개별공시지가 바로가기</a>
+    </section>
+</main>
+
+<footer>
+    개별공시지가 의견제출·이의신청 안내 페이지
+</footer>
+
+<script>
+/* --------------------------------------------------------------
+   1️⃣ 기간 정의 (YYYYMMDD 문자열)
+   -------------------------------------------------------------- */
+const SUBMIT_START = '20260318'; // 의견제출 시작
+const SUBMIT_END   = '20260406'; // 의견제출 종료
+
+const APPEAL_START = '20260415'; // 이의신청 시작
+const APPEAL_END   = '20260529'; // 이의신청 종료
+
+/* --------------------------------------------------------------
+   2️⃣ 오늘 날짜를 YYYYMMDD 형태 문자열로 변환
+   -------------------------------------------------------------- */
+function todayString() {
+    const now = new Date();                     // 브라우저 로컬 시간
+    const y = now.getFullYear().toString();
+    const m = (now.getMonth() + 1).toString().padStart(2, '0');
+    const d = now.getDate().toString().padStart(2, '0');
+    return y + m + d;                           // 예: "20260430"
+}
+
+/* --------------------------------------------------------------
+   3️⃣ 페이지 선택 로직
+   -------------------------------------------------------------- */
+(function () {
+    const today = todayString();
+
+    // URL 파라미터에 mode=closed 가 있으면 강제로 기본 페이지 표시
+    const forceDefault = new URLSearchParams(window.location.search).get('mode') === 'closed';
+
+    let show = 'default';   // 'submit' | 'appeal' | 'default'
+
+    if (!forceDefault) {
+        if (today >= SUBMIT_START && today <= SUBMIT_END) {
+            show = 'submit';
+        } else if (today >= APPEAL_START && today <= APPEAL_END) {
+            show = 'appeal';
+        }
+    }
+
+    // 페이지 전환
+    document.getElementById('page-submit').classList.toggle('hidden', show !== 'submit');
+    document.getElementById('page-appeal').classList.toggle('hidden', show !== 'appeal');
+    document.getElementById('page-default').classList.toggle('hidden', show !== 'default');
+
+    // 헤더 타이틀 업데이트
+    const titleMap = {
+        submit:  '의견제출 기간',
+        appeal:  '이의신청 기간',
+        default: '안내'
+    };
+    document.getElementById('page-title').textContent = titleMap[show];
+})();
+</script>
+
+</body>
+</html>
